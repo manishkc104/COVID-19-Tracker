@@ -2,9 +2,7 @@ import React from "react";
 import "./App.css";
 import { styled } from "styletron-react";
 import Cards from "./Components/Cards/Cards";
-import Charts from "./Components/Charts/Chart";
 import { getApiData } from "./Components/Api/api";
-import CountryPicker from "./Components/CountryPicker/CountryPicker";
 
 const MainContainer = styled("div", () => ({
   display: "flex",
@@ -35,8 +33,6 @@ const App = () => {
   return (
     <MainContainer>
       <Cards data={initialData} />
-      <CountryPicker />
-      <Charts />
     </MainContainer>
   );
 };
