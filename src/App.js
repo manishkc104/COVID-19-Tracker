@@ -1,9 +1,10 @@
 import React from "react";
+import "./App.css";
+import { styled } from "styletron-react";
 import Cards from "./Components/Cards/Cards";
 import Charts from "./Components/Charts/Chart";
+import { getApiData } from "./Components/Api/api";
 import CountryPicker from "./Components/CountryPicker/CountryPicker";
-import { styled } from "styletron-react";
-import "./App.css";
 
 const MainContainer = styled("div", () => ({
   display: "flex",
@@ -11,10 +12,29 @@ const MainContainer = styled("div", () => ({
   justifyContent: "center"
 }));
 
+const INITIAL_STATE = {
+  confirmed: {},
+  recovered: {},
+  deaths: {},
+  lastUpdate: ""
+};
+
 const App = () => {
+  const [initialData, setInitialData] = React.useState(INITIAL_STATE);
+
+  React.useEffect(() => {
+    (async function getFunction() {
+      const response = await getApiData();
+      const {
+        data: { confirmed, recovered, deaths, lastUpdate }
+      } = response;
+      setInitialData({ confirmed, recovered, deaths, lastUpdate });
+    })();
+  }, []);
+
   return (
     <MainContainer>
-      <Cards />
+      <Cards data={initialData} />
       <CountryPicker />
       <Charts />
     </MainContainer>
