@@ -6,7 +6,7 @@ import { Card, CardContent, Typography, Grid } from "@material-ui/core";
 const Container = styled("div", () => ({
   display: "flex",
   alignItems: "center",
-  margin: "50px 0",
+  margin: "30px 0",
   justifyContent: "center"
 }));
 
@@ -28,14 +28,11 @@ const GridCard = styled(Grid, ({ status }) => ({
 }));
 
 const Cards = ({ data }) => {
-  console.log(data);
   if (!data.confirmed.value) {
     return "Loading....";
   }
 
   const { confirmed, recovered, deaths, lastUpdate } = data;
-
-  console.log({ confirmed });
 
   return (
     <Container>
