@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { fetchDailyData } from "../Api/api";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import { styled } from "styletron-react";
 
 const Container = styled("div", () => ({
@@ -11,7 +11,8 @@ const Container = styled("div", () => ({
   justifyContent: "center"
 }));
 
-const Charts = () => {
+const Charts = ({ data }) => {
+  const { confirmed, recovered, deaths, country } = data;
   const [dailyData, setDailyData] = React.useState({});
 
   useEffect(() => {
@@ -25,30 +26,54 @@ const Charts = () => {
     });
   }, []);
 
-  const lineChart = dailyData.length ? (
-    <Line
+  const lineChart =
+    dailyData.length > 0 ? (
+      <Line
+        data={{
+          labels: dailyData.map(({ date }) => date),
+          datasets: [
+            {
+              data: dailyData.map(({ confirmed }) => confirmed),
+              label: "Infected",
+              borderColor: "#3333ff",
+              fill: true
+            },
+            {
+              data: dailyData.map(({ deaths }) => deaths),
+              label: "Deaths",
+              borderColor: "red",
+              backgroundColor: "rgba(255,0,0,0.5)",
+              fill: true
+            }
+          ]
+        }}
+      />
+    ) : null;
+
+  const barChart = confirmed ? (
+    <Bar
       data={{
-        labels: dailyData.map(({ date }) => date),
+        labels: ["Infected", "Recovered", "Deaths"],
         datasets: [
           {
-            data: dailyData.map(({ confirmed }) => confirmed),
-            label: "Infected",
-            borderColor: "#3333ff",
-            fill: true
-          },
-          {
-            data: dailyData.map(({ deaths }) => deaths),
-            label: "Deaths",
-            borderColor: "red",
-            backgroundColor: "rgba(255,0,0,0.5)",
-            fill: true
+            label: "People",
+            backgroundColor: [
+              "rgba(0,0,255,0.5)",
+              "rgba(0,255,0,0.5)",
+              "rgba(255,0,0,0.5)"
+            ],
+            data: [confirmed.value, recovered.value, deaths.value]
           }
         ]
+      }}
+      options={{
+        legend: { display: false },
+        title: { display: true, text: `Current state in ${country}` }
       }}
     />
   ) : null;
 
-  return <Container>{lineChart}</Container>;
+  return <Container>{country ? barChart : lineChart}</Container>;
 };
 
 export default Charts;

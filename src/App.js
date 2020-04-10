@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { styled } from "styletron-react";
 import Cards from "./Components/Cards/Cards";
-import { getApiData } from "./Components/Api/api";
+import { fetchCountriesById, fetchApiData } from "./Components/Api/api";
 import Charts from "./Components/Charts/Chart";
 import CountryPicker from "./Components/CountryPicker/CountryPicker";
 
@@ -17,14 +17,15 @@ const INITIAL_STATE = {
   confirmed: {},
   recovered: {},
   deaths: {},
-  lastUpdate: ""
+  lastUpdate: "",
+  country: ""
 };
 
 const App = () => {
   const [initialData, setInitialData] = React.useState(INITIAL_STATE);
 
   React.useEffect(() => {
-    getApiData().then(response => {
+    fetchApiData().then(response => {
       const {
         data: { confirmed, recovered, deaths, lastUpdate }
       } = response;
@@ -32,11 +33,27 @@ const App = () => {
     });
   }, []);
 
+  const handleCountryChange = country => {
+    fetchCountriesById(country).then(response => {
+      const {
+        data: { confirmed, recovered, deaths, lastUpdate }
+      } = response;
+      setInitialData({
+        ...initialData,
+        confirmed,
+        recovered,
+        deaths,
+        lastUpdate,
+        country: country
+      });
+    });
+  };
+
   return (
     <MainContainer>
       <Cards data={initialData} />
-      <CountryPicker />
-      <Charts />
+      <CountryPicker handleCountryChange={handleCountryChange} />
+      <Charts data={initialData} />
     </MainContainer>
   );
 };
