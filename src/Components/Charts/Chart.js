@@ -6,7 +6,7 @@ import { styled } from "styletron-react";
 const Container = styled("div", () => ({
   display: "flex",
   alignItems: "center",
-  width: "55%",
+  width: "100%",
   marginTop: "30px",
   justifyContent: "center"
 }));
@@ -35,7 +35,7 @@ const Charts = ({ data }) => {
             {
               data: dailyData.map(({ confirmed }) => confirmed),
               label: "Infected",
-              borderColor: "#3333ff",
+              borderColor: "#1F1F7C",
               fill: true
             },
             {
@@ -58,7 +58,7 @@ const Charts = ({ data }) => {
           {
             label: "People",
             backgroundColor: [
-              "rgba(0,0,255,0.5)",
+              "#E7E7F1",
               "rgba(0,255,0,0.5)",
               "rgba(255,0,0,0.5)"
             ],

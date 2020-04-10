@@ -1,107 +1,105 @@
 import React from "react";
 import CountUp from "react-countup";
-import { styled } from "styletron-react";
-import { Card, CardContent, Typography, Grid } from "@material-ui/core";
-
-const Container = styled("div", () => ({
-  display: "flex",
-  alignItems: "center",
-  margin: "30px 0",
-  justifyContent: "center"
-}));
+import { styled, withStyle } from "styletron-react";
+import { INFECTED, RECOVERED, DEATHS } from "../../consts";
+import Card from "../SecondaryComponents/Card";
 
 const priorityColorMap = {
   INFECTED: {
-    borderColor: "rgba(0,0,255,0.5)"
+    borderColor: "#E7E7F1"
   },
   RECOVERED: {
-    borderColor: "rgba(0,255,0,0.5)"
+    borderColor: "#96DD7E"
   },
   DEATHS: {
     borderColor: "rgba(255,0,0,0.5)"
   }
 };
 
-const GridCard = styled(Grid, ({ status }) => ({
-  margin: "0 2% !important",
-  borderBottom: `10px solid ${priorityColorMap[status].borderColor}`
+const ContainerCard = withStyle(Card, ({ status }) => ({
+  display: "flex",
+  flexDirection: "column",
+  padding: "3rem",
+  marginRight: "2rem",
+  borderBottom: `10px solid ${priorityColorMap[status].borderColor}`,
+  ":last-child": {
+    marginRight: 0
+  }
+}));
+
+const Heading = styled("h4", () => ({
+  fontSize: "1.2rem",
+  margin: 0,
+  color: "#0000008a"
+}));
+
+const TotalNumber = styled("span", () => ({
+  fontSize: "2rem",
+  color: "#212121",
+  marginTop: "0.5rem",
+  marginBottom: "0.6rem"
+}));
+
+const DateValue = styled("span", () => ({
+  fontSize: "1.2rem",
+  color: "#0000008a",
+  marginBottom: "0.6rem"
+}));
+
+const Description = styled("span", () => ({
+  fontSize: "1rem",
+  color: "#212121"
+}));
+
+const Container = styled("div", () => ({
+  display: "flex",
+  margin: "30px 0"
 }));
 
 const Cards = ({ data }) => {
-  if (!data.confirmed.value) {
-    return "Loading....";
-  }
+  const capitalize = str =>
+    str
+      .toLowerCase()
+      .split(" ")
+      .map(strWord => strWord.charAt().toUpperCase() + strWord.slice(1))
+      .join(" ");
 
   const { confirmed, recovered, deaths, lastUpdate } = data;
 
+  const STATUS_UPDATE = [
+    {
+      title: INFECTED,
+      value: confirmed.value,
+      lastUpdate: lastUpdate
+    },
+    {
+      title: RECOVERED,
+      value: recovered.value,
+      lastUpdate: lastUpdate
+    },
+    {
+      title: DEATHS,
+      value: deaths.value,
+      lastUpdate: lastUpdate
+    }
+  ];
   return (
-    <Container>
-      <Grid container spacing={3} justify="center">
-        <GridCard item component={Card} xs={12} md={3} status={"INFECTED"}>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              Infected
-            </Typography>
-            <Typography variant="h5">
-              <CountUp
-                start={0}
-                end={confirmed.value}
-                duration={2.5}
-                separator={","}
-              />
-            </Typography>
-            <Typography color="textSecondary">
-              {new Date(lastUpdate).toDateString()}
-            </Typography>
-            <Typography variant="body2">
-              Number of Active cases of Covid-19
-            </Typography>
-          </CardContent>
-        </GridCard>
-        <GridCard item component={Card} xs={12} md={3} status={"RECOVERED"}>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              Recovered
-            </Typography>
-            <Typography variant="h5">
-              <CountUp
-                start={0}
-                end={recovered.value}
-                duration={2.5}
-                separator={","}
-              />
-            </Typography>
-            <Typography color="textSecondary">
-              {new Date(lastUpdate).toDateString()}
-            </Typography>
-            <Typography variant="body2">
-              Number of Recovered cases of Covid-19
-            </Typography>
-          </CardContent>
-        </GridCard>
-        <GridCard item component={Card} xs={12} md={3} status={"DEATHS"}>
-          <CardContent>
-            <Typography color="textSecondary" gutterBottom>
-              Deaths
-            </Typography>
-            <Typography variant="h5">
-              <CountUp
-                start={0}
-                end={deaths.value}
-                duration={2.5}
-                separator={","}
-              />
-            </Typography>
-            <Typography color="textSecondary">
-              {new Date(lastUpdate).toDateString()}
-            </Typography>
-            <Typography variant="body2">
-              Number of Deaths cases of Covid-19
-            </Typography>
-          </CardContent>
-        </GridCard>
-      </Grid>
-    </Container>
+    <React.Fragment>
+      <Container>
+        {STATUS_UPDATE.map(({ title, value, lastUpdate }) => (
+          <ContainerCard status={title} key={value}>
+            <Heading>{capitalize(title)}</Heading>
+            <TotalNumber>
+              <CountUp start={0} end={value} duration={2.5} separator={","} />
+            </TotalNumber>
+            <DateValue>{new Date(lastUpdate).toDateString()}</DateValue>
+            <Description>{`Number of ${capitalize(
+              title
+            )} cases of Covid 19`}</Description>
+          </ContainerCard>
+        ))}
+      </Container>
+    </React.Fragment>
   );
 };
 
